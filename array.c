@@ -73,6 +73,24 @@ void print_array(struct Array *arr) {
   printf("\n");
 }
 
+void remove_value(struct Array *arr, int value) {
+
+  for (int i = 0; i < arr->size; i++) {
+    if (arr->values[i] == value) {
+      arr->size--;
+      for (int j = i; j < arr->size; j++) {
+        arr->values[j] = arr->values[j + 1];
+      }
+
+    }
+  }
+
+  if (arr->capacity >= arr->size * sizeof(int) * 2) {
+    arr->values = realloc(arr->values, sizeof(int) * arr->size * 2);
+  }
+
+}
+
 
 
 int main() {
@@ -88,7 +106,12 @@ int main() {
     print_array(arr_struct);
 
     int removed_value = pop(arr_struct);
-    printf("Removed value: %d\n", removed_value);
+    printf("Removed value (pop): %d\n", removed_value);
+    print_array(arr_struct);
+
+    int value_to_remove = 3;
+    remove_value(arr_struct, value_to_remove);
+    printf("Removed value (remove): %d\n", value_to_remove);
     print_array(arr_struct);
 
     delete_array(&arr_struct);
