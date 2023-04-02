@@ -81,7 +81,6 @@ void remove_value(struct Array *arr, int value) {
       for (int j = i; j < arr->size; j++) {
         arr->values[j] = arr->values[j + 1];
       }
-
     }
   }
 
