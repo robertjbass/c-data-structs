@@ -34,17 +34,11 @@ void print_array(struct Array *arr) {
 }
 
 void reallocate(struct Array *arr) {
-  // decrease
-  // does the array have too much space?
-  // if so, we need to allocate less memory
-  if (arr->capacity >= arr->size * sizeof(int) * 2) {
-    arr->values = realloc(arr->values, sizeof(int) * arr->size * 2);
-  }
+  // does the array have too much or too little space?
+  int too_much = arr->capacity > arr->size * sizeof(int) * 2;
+  int too_little = arr->capacity < arr->size * sizeof(int);
 
-  // increase
-  // does the array have enough space to add a new value?
-  // if not, we need to allocate more memory
-  if (arr->capacity <= arr->size * sizeof(int)) {
+  if (too_much || too_little) {
     arr->values = realloc(arr->values, sizeof(int) * arr->size * 2);
   }
 }
@@ -66,13 +60,7 @@ void push(struct Array *arr, int value) {
 }
 
 int pop(struct Array *arr) {
-  int last_value;
-
-  for (int i = 0; i < arr->size; i++) {
-    if (i == arr->size - 1) {
-      last_value = arr->values[i];
-    }
-  }
+  int last_value = arr->values[arr->size - 1];
 
   arr->size--;
   reallocate(arr);
@@ -83,7 +71,6 @@ int pop(struct Array *arr) {
 
 
 void remove_value(struct Array *arr, int value) {
-
   for (int i = 0; i < arr->size; i++) {
     if (arr->values[i] == value) {
       arr->size--;
