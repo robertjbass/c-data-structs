@@ -26,6 +26,29 @@ struct Array *create_array(int *values, int size) {
   return arr_struct;
 }
 
+void print_array(struct Array *arr) {
+  for (int i = 0; i < arr->size; i++) {
+    printf("%d ", arr->values[i]);
+  }
+  printf("\n");
+}
+
+void reallocate(struct Array *arr) {
+  // decrease
+  // does the array have too much space?
+  // if so, we need to allocate less memory
+  if (arr->capacity >= arr->size * sizeof(int) * 2) {
+    arr->values = realloc(arr->values, sizeof(int) * arr->size * 2);
+  }
+
+  // increase
+  // does the array have enough space to add a new value?
+  // if not, we need to allocate more memory
+  if (arr->capacity <= arr->size * sizeof(int)) {
+    arr->values = realloc(arr->values, sizeof(int) * arr->size * 2);
+  }
+}
+
 void delete_array(struct Array **arr) {
   // free the memory from the heap when we are done with it
   assert(*arr != NULL);
@@ -38,13 +61,7 @@ void delete_array(struct Array **arr) {
 
 void push(struct Array *arr, int value) {
   arr->size++;
-
-  // does the array have enough space to add a new value?
-  // if not, we need to allocate more memory
-  if (arr->capacity <= arr->size * sizeof(int)) {
-    arr->values = realloc(arr->values, sizeof(int) * arr->size * 2);
-  }
-
+  reallocate(arr);
   arr->values[arr->size - 1] = value;
 }
 
@@ -58,20 +75,12 @@ int pop(struct Array *arr) {
   }
 
   arr->size--;
-
-  if (arr->capacity >= arr->size * sizeof(int) * 2) {
-    arr->values = realloc(arr->values, sizeof(int) * arr->size * 2);
-  }
+  reallocate(arr);
 
   return last_value;
 }
 
-void print_array(struct Array *arr) {
-  for (int i = 0; i < arr->size; i++) {
-    printf("%d ", arr->values[i]);
-  }
-  printf("\n");
-}
+
 
 void remove_value(struct Array *arr, int value) {
 
@@ -84,36 +93,33 @@ void remove_value(struct Array *arr, int value) {
     }
   }
 
-  if (arr->capacity >= arr->size * sizeof(int) * 2) {
-    arr->values = realloc(arr->values, sizeof(int) * arr->size * 2);
-  }
-
+  reallocate(arr);
 }
 
 
 
 int main() {
-    int values[] = {1, 2, 3, 4, 5};
-    int size = sizeof(values) / sizeof(int);
+  int values[] = {1, 2, 3, 4, 5};
+  int size = sizeof(values) / sizeof(int);
 
-    struct Array *arr_struct = create_array(values, size);
+  struct Array *arr_struct = create_array(values, size);
 
-    int *arr_values = arr_struct -> values;
+  int *arr_values = arr_struct -> values;
 
-    print_array(arr_struct);
-    push(arr_struct, 6);
-    print_array(arr_struct);
+  print_array(arr_struct);
+  push(arr_struct, 6);
+  print_array(arr_struct);
 
-    int removed_value = pop(arr_struct);
-    printf("Removed value (pop): %d\n", removed_value);
-    print_array(arr_struct);
+  int removed_value = pop(arr_struct);
+  printf("Removed value (pop): %d\n", removed_value);
+  print_array(arr_struct);
 
-    int value_to_remove = 3;
-    remove_value(arr_struct, value_to_remove);
-    printf("Removed value (remove): %d\n", value_to_remove);
-    print_array(arr_struct);
+  int value_to_remove = 3;
+  remove_value(arr_struct, value_to_remove);
+  printf("Removed value (remove): %d\n", value_to_remove);
+  print_array(arr_struct);
 
-    delete_array(&arr_struct);
+  delete_array(&arr_struct);
 
-    return 0;
+  return 0;
 }
