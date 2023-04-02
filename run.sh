@@ -1,4 +1,4 @@
 # /bin/bash
 
-gcc -o array array.c
-./array
+gcc -o "$1" "$1.c"
+"./$1"
